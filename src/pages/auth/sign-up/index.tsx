@@ -1,8 +1,5 @@
 import { useState } from "react";
 
-// Layout
-import AuthLayout from "../layout/AuthLayout";
-
 // Mui
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -23,7 +20,11 @@ import { Controller, useForm } from "react-hook-form";
 import { z as zod } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+// Layout
+import AuthLayout from "../layout/AuthLayout";
+
 const schema = zod.object({
+    username: zod.string().min(1, { message: "Username is required" }),
     email: zod.string().min(1, { message: "Email is required" }).email(),
     password: zod.string().min(1, { message: "Password is required" }),
 });
@@ -31,11 +32,12 @@ const schema = zod.object({
 type Values = zod.infer<typeof schema>;
 
 const defaultValues = {
+    username: "",
     email: "",
     password: "",
 } satisfies Values;
 
-const Login = () => {
+const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     const {
@@ -46,20 +48,30 @@ const Login = () => {
         <AuthLayout>
             <Stack spacing={4}>
                 <Stack spacing={1}>
-                    <Typography variant="h4">Login</Typography>
+                    <Typography variant="h4">Sign Up</Typography>
                     <Typography color="text.secondary" variant="body2">
-                        Don&apos;t have an account?{" "}
-                        <Link
-                            underline="hover"
-                            variant="subtitle2"
-                            href="/sign-up"
-                        >
-                            Sign up
+                        Already have have an account?{" "}
+                        <Link underline="hover" variant="subtitle2" href="/">
+                            Login
                         </Link>
                     </Typography>
                 </Stack>
                 <form>
                     <Stack spacing={2}>
+                        <Controller
+                            control={control}
+                            name="username"
+                            render={({ field }) => (
+                                <FormControl>
+                                    <InputLabel>Username</InputLabel>
+                                    <OutlinedInput
+                                        {...field}
+                                        label="Username"
+                                        type="text"
+                                    />
+                                </FormControl>
+                            )}
+                        />
                         <Controller
                             control={control}
                             name="email"
@@ -101,7 +113,7 @@ const Login = () => {
                             )}
                         />
                         <Button type="submit" variant="contained">
-                            Login
+                            Sign Up
                         </Button>
                     </Stack>
                 </form>
@@ -110,4 +122,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default SignUp;
