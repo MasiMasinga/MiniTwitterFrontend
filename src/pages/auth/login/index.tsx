@@ -84,7 +84,7 @@ const Login = () => {
                             mb: 1,
                         }}
                     >
-                        Min Tweeter
+                        Mini Tweeter
                     </Typography>
                     <Box
                         sx={{
