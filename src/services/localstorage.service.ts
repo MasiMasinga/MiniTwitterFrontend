@@ -5,7 +5,13 @@ const setUser = (user: any) => {
 };
 
 const getUser = () => {
-    return JSON.parse(localStorage.getItem(USER_KEY) || "string");
+    const userStr = localStorage.getItem(USER_KEY);
+    if (!userStr) return null;
+    try {
+        return JSON.parse(userStr);
+    } catch {
+        return null;
+    }
 };
 
 const getLocalAccessToken = () => {

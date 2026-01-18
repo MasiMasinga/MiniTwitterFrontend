@@ -57,11 +57,29 @@ export const Logout = async (data: any) => {
         });
 };
 
+export const UpdateProfile = async (data: any) => {
+    if (!isBrowser) return false;
+
+    return await api
+        .put(`/profile/`, data)
+        .then(function (response) {
+            if (response.status === 200) {
+                return {
+                    status: true,
+                    data: response.data,
+                };
+            }
+        })
+        .catch(function (error) {
+            return handleError(error);
+        });
+};
 
 const AuthService = {
     Register,
     Login,
     Logout,
+    UpdateProfile,
 };
 
 export default AuthService;
