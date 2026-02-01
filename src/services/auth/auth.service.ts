@@ -21,6 +21,24 @@ export const Register = async (data: any) => {
         });
 };
 
+export const GoogleAuth = async (data: any) => {
+    if (!isBrowser) return false;
+    
+    return await api    
+        .post(`user/google-auth/`, data)
+        .then(function (response) {
+            if (response.status === 200) {
+                return {
+                    status: true,
+                    data: response.data,
+                };
+            }
+        })
+        .catch(function (error) {
+            return handleError(error);
+        });
+}
+
 export const Login = async (data: any) => {
     if (!isBrowser) return false;
 
@@ -77,6 +95,7 @@ export const UpdateProfile = async (id: any) => {
 
 const AuthService = {
     Register,
+    GoogleAuth,
     Login,
     Logout,
     UpdateProfile,
