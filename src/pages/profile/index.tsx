@@ -25,7 +25,7 @@ import { z as zod } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 // Services
-import AuthService from "../../services/auth/auth.service";
+import UserService from "../../services/user/user.service";
 import TokenService from "../../services/localstorage.service";
 
 const schema = zod
@@ -116,7 +116,7 @@ const Profile = () => {
                 updateData.password = data.password;
             }
 
-            const response = await AuthService.UpdateProfile(updateData);
+            const response = await UserService.UpdateProfile(updateData);
 
             if (response && response.status) {
                 setSuccess(true);
