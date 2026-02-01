@@ -1,5 +1,8 @@
 import { useState } from "react";
 
+// Google Auth
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+
 // Mui
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
@@ -11,10 +14,15 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
+import Divider from "@mui/material/Divider";
 
 // Mui Icons
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+
+// API
+import api from "../../../services/api";
+import TokenService from "../../../services/localstorage.service";
 
 // React Hook Form
 import { Controller, useForm } from "react-hook-form";
@@ -53,6 +61,7 @@ const defaultValues = {
 const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
 
     const {
         control,
@@ -62,6 +71,20 @@ const SignUp = () => {
 
     const onSubmit = (data: Values) => {
         console.log(data);
+    };
+
+    const handleGoogleSuccess = async (credential?: string) => {
+        try {
+            if (!credential) {
+                throw new Error("Google login did not return an idToken.");
+            }
+
+            const response = await api.post("/user/google-auth", { idToken: credential });
+            TokenService.setUser(response.data);
+            window.location.href = "/";
+        } catch (e) {
+            console.error(e);
+        }
     };
 
     return (
@@ -138,6 +161,24 @@ const SignUp = () => {
                                 borderRadius: 2,
                             }}
                         >
+                            {googleClientId ? (
+                                <GoogleOAuthProvider clientId={googleClientId}>
+                                    <Stack spacing={2} sx={{ mb: 3 }}>
+                                        <GoogleLogin
+                                            onSuccess={(credentialResponse) =>
+                                                handleGoogleSuccess(credentialResponse.credential)
+                                            }
+                                            onError={() => console.error("Google login failed")}
+                                        />
+                                        <Divider>or</Divider>
+                                    </Stack>
+                                </GoogleOAuthProvider>
+                            ) : (
+                                <Typography variant="body2" sx={{ mb: 3 }} color="text.secondary">
+                                    Google sign-in is not configured. Set `VITE_GOOGLE_CLIENT_ID` in your
+                                    frontend `.env`.
+                                </Typography>
+                            )}
                             <form onSubmit={handleSubmit(onSubmit)}>
                                 <Stack spacing={3}>
                                     <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", sm: "row" } }}>

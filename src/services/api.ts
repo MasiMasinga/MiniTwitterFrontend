@@ -6,7 +6,7 @@ import TokenService from "./localstorage.service";
 
 const instance = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
-    withCredentials: true,
+    withCredentials: false,
     timeout: 120000,
     timeoutErrorMessage: "timeout",
     headers: {

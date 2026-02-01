@@ -7,7 +7,7 @@ export const Register = async (data: any) => {
     if (!isBrowser) return false;
 
     return await api
-        .post(`/register/`, data)
+        .post(`user/register/`, data)
         .then(function (response) {
             if (response.status === 201) {
                 return {
@@ -25,7 +25,7 @@ export const Login = async (data: any) => {
     if (!isBrowser) return false;
 
     return await api
-        .post(`/login/`, data)
+        .post(`user/login/`, data)
         .then(function (response) {
             if (response.status === 200) {
                 return {
@@ -57,11 +57,11 @@ export const Logout = async (data: any) => {
         });
 };
 
-export const UpdateProfile = async (data: any) => {
+export const UpdateProfile = async (id: any) => {
     if (!isBrowser) return false;
 
     return await api
-        .put(`/profile/`, data)
+        .put(`update-user-details/profile/${id}`)
         .then(function (response) {
             if (response.status === 200) {
                 return {
