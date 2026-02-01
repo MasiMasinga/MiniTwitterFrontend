@@ -208,6 +208,7 @@ const Home = () => {
             isLiked: false,
             isRetweeted: false,
         };
+        
         setTweets([newTweet, ...tweets]);
         resetTweet();
     };
