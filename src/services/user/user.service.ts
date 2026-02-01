@@ -3,13 +3,13 @@ import { handleError } from "../utils";
 
 const isBrowser = typeof window !== `undefined`;
 
-export const Register = async (data: any) => {
+export const UpdateProfile = async (id: any) => {
     if (!isBrowser) return false;
 
     return await api
-        .post(`user/register/`, data)
+        .put(`update-user-details/profile/${id}`)
         .then(function (response) {
-            if (response.status === 201) {
+            if (response.status === 200) {
                 return {
                     status: true,
                     data: response.data,
@@ -21,11 +21,11 @@ export const Register = async (data: any) => {
         });
 };
 
-export const GoogleAuth = async (data: any) => {
+export const UpdatePassword = async (data: any) => {
     if (!isBrowser) return false;
-    
-    return await api    
-        .post(`user/google-auth/`, data)
+
+    return await api
+        .post(`user/update-password/`, data)
         .then(function (response) {
             if (response.status === 200) {
                 return {
@@ -39,11 +39,11 @@ export const GoogleAuth = async (data: any) => {
         });
 }
 
-export const Login = async (data: any) => {
+export const GetUserDetails = async (id: any) => {
     if (!isBrowser) return false;
 
     return await api
-        .post(`user/login/`, data)
+        .get(`user/details/${id}`)
         .then(function (response) {
             if (response.status === 200) {
                 return {
@@ -55,31 +55,13 @@ export const Login = async (data: any) => {
         .catch(function (error) {
             return handleError(error);
         });
+}
+
+
+const UserService = {
+    UpdateProfile,
+    UpdatePassword,
+    GetUserDetails,
 };
 
-export const Logout = async (data: any) => {
-    if (!isBrowser) return false;
-
-    return await api
-        .post(`/logout/`, data)
-        .then(function (response) {
-            if (response.status === 201) {
-                return {
-                    status: true,
-                    data: response.data,
-                };
-            }
-        })
-        .catch(function (error) {
-            return handleError(error);
-        });
-};
-
-const AuthService = {
-    Register,
-    GoogleAuth,
-    Login,
-    Logout,
-};
-
-export default AuthService;
+export default UserService;
