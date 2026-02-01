@@ -2,6 +2,9 @@
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
+// Auth Context
+import { AuthProvider } from "./common/contexts/AuthContext";
+
 // Notistack
 import { SnackbarProvider } from "notistack";
 
@@ -16,7 +19,9 @@ function App() {
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <SnackbarProvider maxSnack={3}>
-                <PageRoutes />
+                <AuthProvider>
+                    <PageRoutes />
+                </AuthProvider>
             </SnackbarProvider>
         </ThemeProvider>
     );

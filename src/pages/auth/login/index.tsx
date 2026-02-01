@@ -3,6 +3,9 @@ import { useState } from "react";
 // Google Auth
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
+// Auth Context
+import { useAuth } from "../../../common/contexts/AuthContext";
+
 // Mui
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
@@ -18,10 +21,6 @@ import Divider from "@mui/material/Divider";
 // Mui Icons
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-
-// API
-import api from "../../../services/api";
-import TokenService from "../../../services/localstorage.service";
 
 // React Hook Form
 import { Controller, useForm } from "react-hook-form";
@@ -45,6 +44,7 @@ const defaultValues = {
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
+    const { LoginUser, GoogleAuth, isLoading } = useAuth();
 
     const {
         control,
@@ -52,8 +52,8 @@ const Login = () => {
         formState: { errors },
     } = useForm<Values>({ defaultValues, resolver: zodResolver(schema) });
 
-    const onSubmit = (data: Values) => {
-        console.log(data);
+    const onSubmit = async (data: Values) => {
+        await LoginUser(data);
     };
 
     const handleGoogleSuccess = async (credential?: string) => {
@@ -61,10 +61,7 @@ const Login = () => {
             if (!credential) {
                 throw new Error("Google login did not return an idToken.");
             }
-
-            const response = await api.post("/user/google-auth", { idToken: credential });
-            TokenService.setUser(response.data);
-            window.location.href = "/";
+            await GoogleAuth({ idToken: credential });
         } catch (e) {
             console.error(e);
         }
@@ -272,6 +269,7 @@ const Login = () => {
                                         <Button
                                             type="submit"
                                             variant="contained"
+                                            disabled={isLoading}
                                             sx={{
                                                 flex: 1,
                                                 py: 1.5,
@@ -281,10 +279,11 @@ const Login = () => {
                                                 },
                                             }}
                                         >
-                                            Sign In
+                                            {isLoading ? "Signing In..." : "Sign In"}
                                         </Button>
                                         <Button
                                             variant="outlined"
+                                            disabled={isLoading}
                                             sx={{
                                                 flex: 1,
                                                 py: 1.5,
