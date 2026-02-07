@@ -37,24 +37,30 @@ const schema = zod
         password: zod.string().optional(),
         confirmPassword: zod.string().optional(),
     })
-    .refine((data) => {
-        if (data.password && data.password.length > 0) {
-            return data.password === data.confirmPassword;
+    .refine(
+        (data) => {
+            if (data.password && data.password.length > 0) {
+                return data.password === data.confirmPassword;
+            }
+            return true;
+        },
+        {
+            message: "Passwords don't match",
+            path: ["confirmPassword"],
         }
-        return true;
-    }, {
-        message: "Passwords don't match",
-        path: ["confirmPassword"],
-    })
-    .refine((data) => {
-        if (data.password && data.password.length > 0) {
-            return data.password.length >= 6;
+    )
+    .refine(
+        (data) => {
+            if (data.password && data.password.length > 0) {
+                return data.password.length >= 6;
+            }
+            return true;
+        },
+        {
+            message: "Password must be at least 6 characters",
+            path: ["password"],
         }
-        return true;
-    }, {
-        message: "Password must be at least 6 characters",
-        path: ["password"],
-    });
+    );
 
 type Values = zod.infer<typeof schema>;
 
@@ -67,7 +73,8 @@ const Profile = () => {
     const [success, setSuccess] = useState(false);
 
     const user = TokenService.getUser();
-    const userData = (user && typeof user === 'object' && 'user' in user) ? user.user : {};
+    const userData =
+        user && typeof user === "object" && "user" in user ? user.user : {};
 
     const {
         control,
@@ -120,8 +127,11 @@ const Profile = () => {
 
             if (response && response.status) {
                 setSuccess(true);
-                if ('data' in response && response.data) {
-                    const responseData = response as { status: boolean; data: any };
+                if ("data" in response && response.data) {
+                    const responseData = response as {
+                        status: boolean;
+                        data: any;
+                    };
                     const updatedUser = {
                         ...user,
                         user: {
@@ -138,8 +148,9 @@ const Profile = () => {
                 });
             } else {
                 setError(
-                    (response && "message" in response ? response.message : null) ||
-                    "Failed to update profile"
+                    (response && "message" in response
+                        ? response.message
+                        : null) || "Failed to update profile"
                 );
             }
         } catch (err: any) {
@@ -167,15 +178,20 @@ const Profile = () => {
                         }}
                     >
                         <IconButton
-                            onClick={() => navigate("/")}
+                            onClick={() => navigate(-1)}
                             sx={{
                                 color: "#2C6EF9",
-                                "&:hover": { backgroundColor: "rgba(44, 110, 249, 0.1)" },
+                                "&:hover": {
+                                    backgroundColor: "rgba(44, 110, 249, 0.1)",
+                                },
                             }}
                         >
                             <ArrowBackIcon />
                         </IconButton>
-                        <Typography variant="h4" sx={{ fontWeight: 700, color: "#1a1a1a" }}>
+                        <Typography
+                            variant="h4"
+                            sx={{ fontWeight: 700, color: "#1a1a1a" }}
+                        >
                             Update Profile
                         </Typography>
                     </Box>
@@ -215,7 +231,10 @@ const Profile = () => {
                                     borderRadius: 1,
                                 }}
                             >
-                                <Typography variant="body2" color="success.main">
+                                <Typography
+                                    variant="body2"
+                                    color="success.main"
+                                >
                                     Profile updated successfully!
                                 </Typography>
                             </Box>
@@ -244,7 +263,9 @@ const Profile = () => {
                                                     label="Username"
                                                     variant="outlined"
                                                     error={!!errors.username}
-                                                    helperText={errors.username?.message}
+                                                    helperText={
+                                                        errors.username?.message
+                                                    }
                                                 />
                                             )}
                                         />
@@ -272,7 +293,9 @@ const Profile = () => {
                                                     label="First Name"
                                                     variant="outlined"
                                                     error={!!errors.name}
-                                                    helperText={errors.name?.message}
+                                                    helperText={
+                                                        errors.name?.message
+                                                    }
                                                 />
                                             )}
                                         />
@@ -288,7 +311,9 @@ const Profile = () => {
                                                     label="Last Name"
                                                     variant="outlined"
                                                     error={!!errors.lastName}
-                                                    helperText={errors.lastName?.message}
+                                                    helperText={
+                                                        errors.lastName?.message
+                                                    }
                                                 />
                                             )}
                                         />
@@ -317,7 +342,9 @@ const Profile = () => {
                                                     variant="outlined"
                                                     type="email"
                                                     error={!!errors.email}
-                                                    helperText={errors.email?.message}
+                                                    helperText={
+                                                        errors.email?.message
+                                                    }
                                                 />
                                             )}
                                         />
@@ -344,14 +371,25 @@ const Profile = () => {
                                                     fullWidth
                                                     label="New Password (leave blank to keep current)"
                                                     variant="outlined"
-                                                    type={showPassword ? "text" : "password"}
+                                                    type={
+                                                        showPassword
+                                                            ? "text"
+                                                            : "password"
+                                                    }
                                                     error={!!errors.password}
-                                                    helperText={errors.password?.message}
+                                                    helperText={
+                                                        errors.password?.message
+                                                    }
                                                     InputProps={{
                                                         endAdornment: (
                                                             <IconButton
                                                                 onClick={() =>
-                                                                    setShowPassword((prev) => !prev)
+                                                                    setShowPassword(
+                                                                        (
+                                                                            prev
+                                                                        ) =>
+                                                                            !prev
+                                                                    )
                                                                 }
                                                                 edge="end"
                                                             >
@@ -377,14 +415,28 @@ const Profile = () => {
                                                     fullWidth
                                                     label="Confirm New Password"
                                                     variant="outlined"
-                                                    type={showConfirmPassword ? "text" : "password"}
-                                                    error={!!errors.confirmPassword}
-                                                    helperText={errors.confirmPassword?.message}
+                                                    type={
+                                                        showConfirmPassword
+                                                            ? "text"
+                                                            : "password"
+                                                    }
+                                                    error={
+                                                        !!errors.confirmPassword
+                                                    }
+                                                    helperText={
+                                                        errors.confirmPassword
+                                                            ?.message
+                                                    }
                                                     InputProps={{
                                                         endAdornment: (
                                                             <IconButton
                                                                 onClick={() =>
-                                                                    setShowConfirmPassword((prev) => !prev)
+                                                                    setShowConfirmPassword(
+                                                                        (
+                                                                            prev
+                                                                        ) =>
+                                                                            !prev
+                                                                    )
                                                                 }
                                                                 edge="end"
                                                             >
@@ -417,7 +469,10 @@ const Profile = () => {
                                         }}
                                     >
                                         {loading ? (
-                                            <CircularProgress size={24} color="inherit" />
+                                            <CircularProgress
+                                                size={24}
+                                                color="inherit"
+                                            />
                                         ) : (
                                             "Update Profile"
                                         )}
@@ -433,7 +488,8 @@ const Profile = () => {
                                             color: "#2C6EF9",
                                             "&:hover": {
                                                 borderColor: "#1e5dd9",
-                                                backgroundColor: "rgba(44, 110, 249, 0.04)",
+                                                backgroundColor:
+                                                    "rgba(44, 110, 249, 0.04)",
                                             },
                                         }}
                                     >
